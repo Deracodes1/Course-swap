@@ -1,0 +1,89 @@
+<div
+  class="mobile-canvas max-w-md mx-auto border shadow-sm bg-white min-h-screen p-6 flex flex-col justify-between font-sans"
+>
+  <div class="grow flex flex-col justify-center">
+    <div class="text-center mb-8">
+      <div
+        class="w-16 h-16 bg-zinc-800 text-white font-serif text-3xl flex items-center justify-center rounded-2xl mx-auto shadow-sm mb-3"
+      >
+        CS
+      </div>
+      <h1 class="text-2xl font-bold font-serif text-gray-900">CourseSwap</h1>
+      <p class="text-xs text-gray-400 mt-1">Campus Peer-to-Peer Learning Market</p>
+    </div>
+
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      @if (isSignUpMode) {
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1"
+            >Full Name</label
+          >
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Chinedu Okafor"
+            class="w-full p-3 border rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-zinc-500"
+            [class.border-red-400]="authForm.get('name')?.touched && authForm.get('name')?.invalid"
+          />
+        </div>
+      }
+
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1"
+          >Institutional Email</label
+        >
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="student@university.edu"
+          class="w-full p-3 border rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-zinc-500"
+          [class.border-red-400]="authForm.get('email')?.touched && authForm.get('email')?.invalid"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1"
+          >Password</label
+        >
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          class="w-full p-3 border rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-zinc-500"
+          [class.border-red-400]="
+            authForm.get('password')?.touched && authForm.get('password')?.invalid
+          "
+        />
+      </div>
+
+      @if (errorMessage) {
+        <div
+          class="p-3 text-xs bg-red-50 text-red-600 rounded-lg border border-red-200 font-medium text-center"
+        >
+          {{ errorMessage }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="w-full py-3 bg-zinc-800 text-white font-medium text-sm rounded-xl shadow-xs hover:bg-zinc-900 transition-colors mt-2"
+      >
+        {{ isSignUpMode ? 'Create Account' : 'Sign In' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="text-center pt-4 border-t border-gray-100">
+    <button
+      type="button"
+      (click)="toggleMode()"
+      class="text-xs font-medium text-gray-500 hover:text-zinc-800 focus:outline-none"
+    >
+      {{
+        isSignUpMode
+          ? 'Already have an institutional account? Sign In'
+          : "Don't have an account yet? Register here"
+      }}
+    </button>
+  </div>
+</div>

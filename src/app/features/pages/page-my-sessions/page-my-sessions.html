@@ -1,0 +1,77 @@
+<div
+  class="mobile-canvas p-4 bg-white min-h-screen max-w-md mx-auto border shadow-sm flex flex-col justify-between"
+>
+  <div>
+    <h1 class="text-xl font-bold text-center my-4 text-gray-800">My Sessions</h1>
+
+    <!-- Nav Tab Segment Control Track[cite: 1] -->
+    <div class="flex border-b text-sm mb-4 justify-between font-medium">
+      <button
+        (click)="setTab('Confirmed')"
+        [class.border-b-2]="activeTab === 'Confirmed'"
+        class="pb-2 px-2 border-zinc-800 text-gray-600 focus:outline-none"
+        [class.text-zinc-900]="activeTab === 'Confirmed'"
+      >
+        Upcoming
+      </button>
+      <button
+        (click)="setTab('Pending')"
+        [class.border-b-2]="activeTab === 'Pending'"
+        class="pb-2 px-2 border-zinc-800 text-gray-600 focus:outline-none"
+        [class.text-zinc-900]="activeTab === 'Pending'"
+      >
+        Pending
+      </button>
+      <button
+        (click)="setTab('Completed')"
+        [class.border-b-2]="activeTab === 'Completed'"
+        class="pb-2 px-2 border-zinc-800 text-gray-600 focus:outline-none"
+        [class.text-zinc-900]="activeTab === 'Completed'"
+      >
+        Completed
+      </button>
+    </div>
+
+    <!-- Grouped Commitment View List Items[cite: 1] -->
+    <div class="divide-y">
+      @for (session of sessions$ | async; track session.id) {
+        <div class="py-4 flex items-start space-x-3">
+          <input
+            type="checkbox"
+            disabled
+            [checked]="session.status === 'Completed'"
+            class="mt-1 rounded border-gray-300 accent-zinc-700"
+          />
+          <div>
+            <h4 class="font-bold text-gray-900 text-base">{{ session.courseCode }}</h4>
+            <p class="text-xs text-gray-500">
+              Partner: {{ session.partnerName }} - {{ session.dateTime }}
+            </p>
+            <p
+              class="text-xs mt-1 font-semibold"
+              [ngClass]="{
+                'text-green-600': session.status === 'Confirmed',
+                'text-amber-600': session.status === 'Pending',
+                'text-gray-400': session.status === 'Completed',
+              }"
+            >
+              Status: {{ session.status }}
+            </p>
+          </div>
+        </div>
+      } @empty {
+        <div class="text-center py-12 text-sm text-gray-400">
+          No {{ activeTab.toLowerCase() }} sessions listed.
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Bottom Prototype Quick Sandbox Injector Button -->
+  <button
+    (click)="triggerMockBookingAction()"
+    class="w-full py-3 bg-zinc-800 text-white rounded-xl font-medium text-sm shadow-md mt-6"
+  >
+    🧪 Simulate Requesting Aria for 'Prog Fundamentals'
+  </button>
+</div>

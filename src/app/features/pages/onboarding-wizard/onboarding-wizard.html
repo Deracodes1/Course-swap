@@ -1,0 +1,228 @@
+<div
+  class="mobile-canvas max-w-md mx-auto border shadow-sm bg-white min-h-screen p-6 flex flex-col justify-between font-sans"
+>
+  <form [formGroup]="onboardingForm" class="grow flex flex-col justify-between">
+    <!-- ==========================================
+         SCREEN 1: INTENT ONBOARDING SELECTION[cite: 1]
+         ========================================== -->
+    @if (currentStep === 1) {
+      <div class="flex flex-col items-center grow justify-center py-6">
+        <h1 class="text-2xl font-bold font-serif mb-1 text-gray-900 text-center">CourseSwap</h1>
+
+        <!-- Frame Placeholder graphic component layout[cite: 1] -->
+        <div
+          class="w-36 h-36 bg-gray-100 border rounded-full flex items-center justify-center my-6"
+        >
+          <span class="text-gray-400 text-4xl">🖼️</span>
+        </div>
+
+        <h2 class="text-xl font-bold text-gray-800 text-center">CourseSwap</h2>
+        <p class="text-sm text-gray-500 text-center mb-8">Welcome to CourseSwap</p>
+
+        <!-- Form Options Selection Group[cite: 1] -->
+        <div class="w-full space-y-3">
+          <label class="block text-sm font-bold text-gray-700 mb-1">I want to:</label>
+
+          <div
+            (click)="setIntent('Teach')"
+            [class.border-zinc-800]="onboardingForm.get('intent')?.value === 'Teach'"
+            class="flex items-center p-3 border rounded-xl cursor-pointer bg-gray-50 transition-all hover:bg-gray-100"
+          >
+            <span class="mr-3">👨‍🏫</span>
+            <span class="text-sm font-medium text-gray-800">Teach</span>
+          </div>
+
+          <div
+            (click)="setIntent('Learn')"
+            [class.border-zinc-800]="onboardingForm.get('intent')?.value === 'Learn'"
+            class="flex items-center p-3 border rounded-xl cursor-pointer bg-gray-50 transition-all hover:bg-gray-100"
+          >
+            <span class="mr-3">🧠</span>
+            <span class="text-sm font-medium text-gray-800">Learn</span>
+          </div>
+
+          <div
+            (click)="setIntent('Both')"
+            [class.border-zinc-800]="onboardingForm.get('intent')?.value === 'Both'"
+            class="flex items-center p-3 border rounded-xl cursor-pointer bg-gray-50 transition-all hover:bg-gray-100"
+          >
+            <span class="mr-3">🔄</span>
+            <span class="text-sm font-medium text-gray-800">Both</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer Track[cite: 1] -->
+      <div class="mt-4">
+        @if (errorMessage) {
+          <div
+            class="p-3 mb-3 text-xs bg-red-50 text-red-600 rounded-lg border border-red-200 font-medium text-center"
+          >
+            {{ errorMessage }}
+          </div>
+        }
+        <button
+          type="button"
+          (click)="goToNextStep()"
+          class="w-full py-3 bg-zinc-700 text-white font-medium text-sm rounded-xl hover:bg-zinc-800 transition-colors"
+        >
+          Continue
+        </button>
+      </div>
+    }
+
+    <!-- ==========================================
+         SCREEN 2: ACADEMIC INTAKE FIELDS[cite: 1]
+         ========================================== -->
+    @if (currentStep === 2) {
+      <div class="space-y-4 pt-4">
+        <div
+          class="text-xs text-gray-400 font-mono tracking-wider flex justify-between items-center mb-2"
+        >
+          <span>10:00 ⏰</span>
+          <span class="font-bold">Complete Your Acad...</span>
+        </div>
+
+        <!-- Department Input Select Control[cite: 1] -->
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-1">Department</label>
+          <select
+            formControlName="department"
+            class="w-full p-2.5 border rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-zinc-500"
+          >
+            <option value="" disabled selected>Select Department</option>
+            @for (dept of departments; track dept) {
+              <option [value]="dept">{{ dept }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Academic Level Input Select Control[cite: 1] -->
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-1">Level</label>
+          <select
+            formControlName="level"
+            class="w-full p-2.5 border rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-zinc-500"
+          >
+            <option value="" disabled selected>Select Level</option>
+            @for (lvl of levels; track lvl) {
+              <option [value]="lvl">{{ lvl }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Conditional Capability: Courses I Can Teach[cite: 1] -->
+        @if (
+          onboardingForm.get('intent')?.value === 'Teach' ||
+          onboardingForm.get('intent')?.value === 'Both'
+        ) {
+          <div>
+            <label class="block text-sm font-bold text-gray-800 mb-1">Courses I Can Teach</label>
+            <select
+              (change)="toggleCourseSelection('canTeach', courseSelect.value, $event)"
+              #courseSelect
+              class="w-full p-2.5 border rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none"
+            >
+              <option value="" disabled selected>Tap courses to select/deselect</option>
+              @for (course of availableCourses; track course) {
+                <option [value]="course">{{ course }}</option>
+              }
+            </select>
+            <!-- Render Selected Course Badges[cite: 1] -->
+            <div class="flex flex-wrap gap-1 mt-2">
+              @for (selected of onboardingForm.get('canTeach')?.value; track selected) {
+                <span class="px-2 py-0.5 bg-zinc-800 text-white text-xs rounded-md">
+                  {{ selected }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Conditional Requirement: Courses I Need Help With[cite: 1] -->
+        @if (
+          onboardingForm.get('intent')?.value === 'Learn' ||
+          onboardingForm.get('intent')?.value === 'Both'
+        ) {
+          <div>
+            <label class="block text-sm font-bold text-gray-800 mb-1"
+              >Courses I Need Help With</label
+            >
+            <select
+              (change)="toggleCourseSelection('needsHelpWith', helpSelect.value, $event)"
+              #helpSelect
+              class="w-full p-2.5 border rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none"
+            >
+              <option value="" disabled selected>Tap courses to select/deselect</option>
+              @for (course of availableCourses; track course) {
+                <option [value]="course">{{ course }}</option>
+              }
+            </select>
+            <!-- Render Selected Course Badges[cite: 1] -->
+            <div class="flex flex-wrap gap-1 mt-2">
+              @for (selected of onboardingForm.get('needsHelpWith')?.value; track selected) {
+                <span
+                  class="px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-md border border-gray-300"
+                >
+                  {{ selected }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Availability Layout Framework Checks[cite: 1] -->
+        <div class="pt-2 border-t">
+          <label class="block text-sm font-bold text-gray-800 mb-2">Availability</label>
+
+          <div class="flex flex-col space-y-2">
+            <label class="flex items-center space-x-3 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                formControlName="weekdays"
+                class="rounded border-gray-300 text-zinc-700 focus:ring-zinc-500 h-4 w-4"
+              />
+              <span>Weekdays</span>
+            </label>
+
+            <label class="flex items-center space-x-3 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                formControlName="weekends"
+                class="rounded border-gray-300 text-zinc-700 focus:ring-zinc-500 h-4 w-4"
+              />
+              <span>Weekends</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer Track[cite: 1] -->
+      <div class="mt-6">
+        @if (errorMessage) {
+          <div
+            class="p-3 mb-3 text-xs bg-red-50 text-red-600 rounded-lg border border-red-200 font-medium text-center"
+          >
+            {{ errorMessage }}
+          </div>
+        }
+        <div class="flex space-x-2">
+          <button
+            type="button"
+            (click)="currentStep = 1; errorMessage = ''"
+            class="px-4 py-3 bg-gray-100 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-200 transition-colors"
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            (click)="submitOnboarding()"
+            class="grow py-3 bg-zinc-700 text-white font-medium text-sm rounded-xl hover:bg-zinc-800 transition-colors"
+          >
+            Find Matches
+          </button>
+        </div>
+      </div>
+    }
+  </form>
+</div>
