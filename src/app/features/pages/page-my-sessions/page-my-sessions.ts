@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MockDbService, Session } from './../../../core/services/mock-db.service';
 import { Observable, map } from 'rxjs';
-
+import { Router } from '@angular/router';
 // Unified type representation matching the expanded tab navigation track
 export type SessionTabType = 'All' | 'Confirmed' | 'Pending' | 'Completed';
 
@@ -17,7 +17,10 @@ export class PageMySessions implements OnInit {
   sessions$!: Observable<Session[]>;
   activeTab: SessionTabType = 'All'; // Defaults directly to the multi-view layout pane
 
-  constructor(private db: MockDbService) {}
+  constructor(
+    private db: MockDbService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.fetchFilteredSessions();
@@ -43,11 +46,6 @@ export class PageMySessions implements OnInit {
 
   // Acceptance Criteria Action Trigger Handler
   viewSessionDetails(session: Session): void {
-    console.log(
-      `Inspecting full contextual metadata card for session sequence identifier: ${session.id}`,
-    );
-    alert(
-      `Opening detailed context modal for ${session.courseCode} with ${session.partnerName}.\nFormat: ${session.format}\nNotes: ${session.notes || 'None provided.'}`,
-    );
+    this.router.navigate(['/my-sessions', session.id]);
   }
 }
