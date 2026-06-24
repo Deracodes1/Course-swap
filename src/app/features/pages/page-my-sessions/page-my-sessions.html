@@ -1,77 +1,109 @@
 <div
-  class="mobile-canvas p-4 bg-white min-h-screen max-w-md mx-auto border shadow-sm flex flex-col justify-between"
+  class="mobile-canvas p-5 bg-white min-h-screen max-w-md mx-auto border shadow-sm flex flex-col font-sans text-zinc-800"
 >
   <div>
-    <h1 class="text-xl font-bold text-center my-4 text-gray-800">My Sessions</h1>
+    <!-- Simulated Device Header Area Grid Tracking Panel -->
+    <div
+      class="text-xs font-bold font-mono tracking-wider flex justify-between items-center mb-4 text-zinc-900"
+    >
+      <span>10:00 AM</span>
+      <div class="flex space-x-1 items-center">
+        <span>📶</span>
+        <span>🔋</span>
+      </div>
+    </div>
 
-    <!-- Nav Tab Segment Control Track[cite: 1] -->
-    <div class="flex border-b text-sm mb-4 justify-between font-medium">
+    <!-- Centered Header Heading Element Label Specification -->
+    <h1 class="text-xl font-black text-center my-4 font-serif text-zinc-900 tracking-tight">
+      My Sessions
+    </h1>
+
+    <!-- 4-Column Nav Tab Segment Selector Slide Control Track Layout -->
+    <div
+      class="flex border-b border-zinc-800 text-xs mb-4 justify-between font-extrabold select-none"
+    >
+      <button
+        (click)="setTab('All')"
+        [class.border-b-4]="activeTab === 'All'"
+        class="pb-2 px-1 border-zinc-800 text-zinc-400 focus:outline-none transition-all duration-150"
+        [class.text-zinc-900]="activeTab === 'All'"
+      >
+        All
+      </button>
+
       <button
         (click)="setTab('Confirmed')"
-        [class.border-b-2]="activeTab === 'Confirmed'"
-        class="pb-2 px-2 border-zinc-800 text-gray-600 focus:outline-none"
+        [class.border-b-4]="activeTab === 'Confirmed'"
+        class="pb-2 px-1 border-zinc-800 text-zinc-400 focus:outline-none transition-all duration-150"
         [class.text-zinc-900]="activeTab === 'Confirmed'"
       >
         Upcoming
       </button>
+
       <button
         (click)="setTab('Pending')"
-        [class.border-b-2]="activeTab === 'Pending'"
-        class="pb-2 px-2 border-zinc-800 text-gray-600 focus:outline-none"
+        [class.border-b-4]="activeTab === 'Pending'"
+        class="pb-2 px-1 border-zinc-800 text-zinc-400 focus:outline-none transition-all duration-150"
         [class.text-zinc-900]="activeTab === 'Pending'"
       >
         Pending
       </button>
+
       <button
         (click)="setTab('Completed')"
-        [class.border-b-2]="activeTab === 'Completed'"
-        class="pb-2 px-2 border-zinc-800 text-gray-600 focus:outline-none"
+        [class.border-b-4]="activeTab === 'Completed'"
+        class="pb-2 px-1 border-zinc-800 text-zinc-400 focus:outline-none transition-all duration-150"
         [class.text-zinc-900]="activeTab === 'Completed'"
       >
         Completed
       </button>
     </div>
 
-    <!-- Grouped Commitment View List Items[cite: 1] -->
-    <div class="divide-y">
+    <!-- Grouped Bounding Box Interactive Commitment Stack Listing -->
+    <div
+      class="border-2 border-zinc-800 rounded-xl divide-y-2 divide-zinc-800 overflow-hidden bg-white"
+    >
       @for (session of sessions$ | async; track session.id) {
-        <div class="py-4 flex items-start space-x-3">
-          <input
-            type="checkbox"
-            disabled
-            [checked]="session.status === 'Completed'"
-            class="mt-1 rounded border-gray-300 accent-zinc-700"
-          />
-          <div>
-            <h4 class="font-bold text-gray-900 text-base">{{ session.courseCode }}</h4>
-            <p class="text-xs text-gray-500">
-              Partner: {{ session.partnerName }} - {{ session.dateTime }}
-            </p>
-            <p
-              class="text-xs mt-1 font-semibold"
-              [ngClass]="{
-                'text-green-600': session.status === 'Confirmed',
-                'text-amber-600': session.status === 'Pending',
-                'text-gray-400': session.status === 'Completed',
-              }"
+        <div
+          (click)="viewSessionDetails(session)"
+          class="p-4 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors flex flex-col justify-between space-y-1"
+        >
+          <div class="flex justify-between items-start">
+            <h4 class="font-extrabold text-zinc-900 text-base font-serif tracking-tight">
+              {{ session.courseCode }}
+            </h4>
+            <!-- Optional Micro Badge indicating meeting configuration framework -->
+            <span
+              class="text-[10px] font-bold px-2 py-0.5 bg-gray-100 rounded border border-gray-300 text-gray-600"
             >
-              Status: {{ session.status }}
-            </p>
+              {{ session.format === 'Physical Meeting' ? '👥 Physical' : '🌐 Virtual' }}
+            </span>
           </div>
+
+          <p class="text-xs font-semibold text-zinc-500 leading-relaxed">
+            Partner: {{ session.partnerName }} - {{ session.dateTime }}
+          </p>
+
+          <p class="text-xs font-bold mt-1 tracking-wide flex items-center">
+            <span class="mr-1 text-[10px]">➖</span>
+            Status:
+            <span
+              [ngClass]="{
+                'text-zinc-900': session.status === 'Confirmed',
+                'text-zinc-600 italic': session.status === 'Pending',
+                'text-gray-400 line-through decoration-1': session.status === 'Completed',
+              }"
+              class="ml-1"
+            >
+              {{ session.status }}
+            </span>
+          </p>
         </div>
       } @empty {
-        <div class="text-center py-12 text-sm text-gray-400">
-          No {{ activeTab.toLowerCase() }} sessions listed.
+        <div class="text-center py-16 text-sm font-semibold text-gray-400 bg-gray-50/50">
+          No {{ activeTab === 'All' ? '' : activeTab.toLowerCase() }} session cards available.
         </div>
       }
     </div>
   </div>
-
-  <!-- Bottom Prototype Quick Sandbox Injector Button -->
-  <button
-    (click)="triggerMockBookingAction()"
-    class="w-full py-3 bg-zinc-800 text-white rounded-xl font-medium text-sm shadow-md mt-6"
-  >
-    🧪 Simulate Requesting Aria for 'Prog Fundamentals'
-  </button>
 </div>

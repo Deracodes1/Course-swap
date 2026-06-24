@@ -1,7 +1,16 @@
-import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UserProfile, Session } from '../models/user-models';
+import { UserProfile } from '../models/user-models';
+import { Injectable } from '@angular/core';
+export interface Session {
+  id: string;
+  courseCode: string;
+  partnerName: string;
+  dateTime: string;
+  format: 'Physical Meeting' | 'Virtual Meeting';
+  notes?: string;
+  status: 'Confirmed' | 'Pending' | 'Completed';
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -59,6 +68,7 @@ export class MockDbService {
       courseCode: 'Calculus 101',
       partnerName: 'Elara Moon',
       dateTime: 'Oct 10, 3:00 PM',
+      format: 'Physical Meeting',
       status: 'Confirmed',
     },
     {
@@ -66,6 +76,31 @@ export class MockDbService {
       courseCode: 'Physics 202',
       partnerName: 'Orion Vega',
       dateTime: 'Oct 12, 5:00 PM',
+      format: 'Virtual Meeting',
+      status: 'Pending',
+    },
+    {
+      id: '3',
+      courseCode: 'Literature 303',
+      partnerName: 'Lyra Comet',
+      dateTime: 'Oct 15, 1:00 PM',
+      format: 'Physical Meeting',
+      status: 'Completed',
+    },
+    {
+      id: '4',
+      courseCode: 'Chemistry 404',
+      partnerName: 'Nova Star',
+      dateTime: 'Oct 17, 11:00 AM',
+      format: 'Virtual Meeting',
+      status: 'Confirmed',
+    },
+    {
+      id: '5',
+      courseCode: 'Biology 505',
+      partnerName: 'Sirius Orbit',
+      dateTime: 'Oct 20, 2:00 PM',
+      format: 'Physical Meeting',
       status: 'Pending',
     },
   ]);
@@ -73,9 +108,13 @@ export class MockDbService {
   getCurrentUser(): Observable<UserProfile> {
     return this.currentUser$.asObservable();
   }
-
   getSessions(): Observable<Session[]> {
     return this.sessions$.asObservable();
+  }
+
+  addSession(session: Session): void {
+    const currentSessions = this.sessions$.value;
+    this.sessions$.next([...currentSessions, session]);
   }
 
   // Dual-sided matching query engine logic ("What I need help with" matches "What they can teach")

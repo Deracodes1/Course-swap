@@ -30,8 +30,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'booking-request',
+    loadComponent: () =>
+      import('./features/pages/booking-request/booking-request').then((m) => m.BookingRequest),
+  },
+  {
     path: 'my-sessions',
     loadComponent: () =>
       import('./features/pages/page-my-sessions/page-my-sessions').then((m) => m.PageMySessions),
+  },
+  {
+    path: 'my-sessions/:id',
+    loadComponent: () =>
+      import('./features/pages/page-session-details/page-session-details').then(
+        (m) => m.PageSessionDetails,
+      ),
   },
 ];

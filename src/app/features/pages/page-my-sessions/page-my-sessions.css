@@ -1,0 +1,6 @@
+.mobile-canvas {
+  -webkit-font-smoothing: antialiased;
+}
+.divide-y-2 > div:last-child {
+  border-bottom: none;
+}

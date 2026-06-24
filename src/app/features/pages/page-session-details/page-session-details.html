@@ -1,0 +1,106 @@
+<div
+  class="mobile-canvas p-5 bg-white min-h-screen max-w-md mx-auto border shadow-sm flex flex-col justify-between font-sans text-zinc-800"
+>
+  <div>
+    <!-- Device Simulated Top Header -->
+    <div
+      class="text-xs font-bold font-mono tracking-wider flex justify-between items-center mb-6 text-zinc-900"
+    >
+      <button
+        (click)="goBack()"
+        class="text-sm font-bold text-zinc-700 hover:text-zinc-900 focus:outline-none flex items-center"
+      >
+        ← Back
+      </button>
+      <span>10:00 AM</span>
+    </div>
+
+    @if (sessionData) {
+      <!-- Main Detailed Card Canvas Container -->
+      <div class="border-2 border-zinc-800 rounded-2xl p-5 bg-white shadow-xs space-y-5">
+        <!-- Header Section: Course Code & Status -->
+        <div class="flex justify-between items-start border-b-2 border-dashed border-zinc-200 pb-4">
+          <div>
+            <span class="text-xs font-black uppercase tracking-widest text-zinc-400"
+              >Course Identifier</span
+            >
+            <h2 class="text-2xl font-black font-serif text-zinc-900 mt-0.5 tracking-tight">
+              {{ sessionData.courseCode }}
+            </h2>
+          </div>
+          <span
+            [ngClass]="{
+              'bg-zinc-900 text-white': sessionData.status === 'Confirmed',
+              'bg-zinc-100 border border-zinc-800 text-zinc-800': sessionData.status === 'Pending',
+              'bg-gray-100 text-gray-400 border-gray-200': sessionData.status === 'Completed',
+            }"
+            class="text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider"
+          >
+            {{ sessionData.status }}
+          </span>
+        </div>
+
+        <!-- Meta Details Fields Grid Grid Stack -->
+        <div class="space-y-4">
+          <!-- Parameter Row 1: Peer Partner -->
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block"
+              >Assigned Partner</span
+            >
+            <div class="flex items-center space-x-2 mt-1">
+              <span class="text-lg">👤</span>
+              <span class="text-sm font-bold text-zinc-900">{{ sessionData.partnerName }}</span>
+            </div>
+          </div>
+
+          <!-- Parameter Row 2: Appointment Time -->
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block"
+              >Schedule Slot</span
+            >
+            <div class="flex items-center space-x-2 mt-1">
+              <span class="text-lg">📅</span>
+              <span class="text-sm font-bold text-zinc-900">{{ sessionData.dateTime }}</span>
+            </div>
+          </div>
+
+          <!-- Parameter Row 3: Meeting Format Link -->
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block"
+              >Meeting Format</span
+            >
+            <div class="flex items-center space-x-2 mt-1">
+              <span class="text-lg">{{
+                sessionData.format === 'Physical Meeting' ? '👥' : '🌐'
+              }}</span>
+              <span class="text-sm font-bold text-zinc-900">{{ sessionData.format }}</span>
+            </div>
+          </div>
+
+          <!-- Parameter Row 4: Custom Notes Text Block -->
+          <div class="pt-2 border-t border-gray-100">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1"
+              >Session Notes</span
+            >
+            <div class="bg-gray-50 border border-zinc-200 rounded-xl p-3 min-h-15">
+              <p class="text-xs font-medium text-zinc-600 leading-relaxed italic">
+                {{ sessionData.notes || 'No custom notes provided for this exchange.' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Primary Bottom Control Action -->
+  <div class="mt-6">
+    <button
+      type="button"
+      (click)="goBack()"
+      class="w-full py-3.5 bg-zinc-800 text-white font-bold text-sm rounded-xl hover:bg-zinc-900 transition-colors tracking-wide"
+    >
+      Return to Dashboard
+    </button>
+  </div>
+</div>

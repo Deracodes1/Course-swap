@@ -12,10 +12,3 @@ export interface UserProfile {
   sessionsCompleted: number;
   isOnboarded: boolean;
 }
-export interface Session {
-  id: string;
-  courseCode: string;
-  partnerName: string;
-  dateTime: string;
-  status: 'Confirmed' | 'Pending' | 'Completed';
-}
