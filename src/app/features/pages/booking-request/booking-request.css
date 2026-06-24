@@ -1,0 +1,8 @@
+.mobile-canvas {
+  letter-spacing: -0.01em;
+}
+select,
+textarea,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
