@@ -1,3 +1,4 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -13,7 +14,8 @@ export const routes: Routes = [
   },
   {
     path: 'auth-entry',
-    loadComponent: () => import('./auth/pages/auth-entry/auth-entry').then((m) => m.AuthEntry),
+    loadComponent: () =>
+      import('./auth/pages/auth-entry/auth-entry').then((m) => m.AuthEntry),
   },
   {
     path: 'onboarding',
@@ -27,6 +29,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/pages/page-recommended-matches/page-recommended-matches').then(
         (m) => m.PageRecommendedMatches,
+      ),
+  },
+  {
+    path: 'match-profile/:id', 
+    loadComponent: () =>
+      import('./features/pages/page-match-profile/page-match-profile').then(
+        (m) => m.PageMatchProfile,
       ),
   },
   {
@@ -46,4 +55,4 @@ export const routes: Routes = [
         (m) => m.PageSessionDetails,
       ),
   },
-];
+]
