@@ -11,4 +11,5 @@ export interface UserProfile {
   rating: number;
   sessionsCompleted: number;
   isOnboarded: boolean;
+  matchPercentage?: number;
 }

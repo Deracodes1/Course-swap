@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable, debounceTime, startWith, switchMap } from 'rxjs';
 import { MockDbService } from '../../../core/services/mock-db.service';
-import { UserProfile } from './../../../core/models/user-models';
+import { UserProfile } from '../../../core/models/user-models';
+
 @Component({
   selector: 'app-page-recommended-matches',
   imports: [CommonModule, ReactiveFormsModule],
@@ -14,18 +16,24 @@ export class PageRecommendedMatches implements OnInit {
   searchControl = new FormControl('');
   filteredMatches$!: Observable<UserProfile[]>;
 
-  constructor(private db: MockDbService) {}
+  constructor(
+    private db: MockDbService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.filteredMatches$ = this.searchControl.valueChanges.pipe(
       startWith(''),
-      debounceTime(200), // Optimizes response lag for low-end mobile devices
+      debounceTime(200),
       switchMap((query) => this.db.getMatches(query || '')),
     );
   }
 
+  clearSearch(): void {
+    this.searchControl.setValue('');
+  }
+
   viewProfile(tutor: UserProfile): void {
-    // In a real app, route to booking drawer or profile view screen
-    console.log('Open profile context context for:', tutor.name);
+    this.router.navigate(['/match-profile', tutor.id]);
   }
 }

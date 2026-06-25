@@ -1,0 +1,93 @@
+<!-- src/app/features/pages/page-match-profile/page-match-profile.html -->
+<div class="mobile-canvas p-4 bg-white min-h-screen max-w-md mx-auto border shadow-sm flex flex-col">
+
+  @if (tutor$ | async; as tutor) {
+
+    <!-- Avatar -->
+    <div class="flex flex-col items-center pt-6 pb-4">
+      <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4 border">
+        <span class="text-gray-400 text-3xl">👤</span>
+      </div>
+
+      <!-- Name & Subtitle -->
+      <h2 class="font-bold text-xl text-gray-900">{{ tutor.name }}</h2>
+      <p class="text-sm text-gray-500 mt-0.5">{{ tutor.department }}, {{ tutor.level }}</p>
+
+      <!-- Stats -->
+      <p class="text-sm font-medium text-gray-500 mt-1">
+        {{ tutor.rating }} Rating &nbsp; {{ tutor.sessionsCompleted }} Sessions Completed
+      </p>
+
+      <!-- Follow Button -->
+      <button
+        (click)="toggleFollow(tutor.id)"
+        class="mt-4 w-full py-2.5 border-2 font-medium text-sm rounded-xl transition-colors"
+        [class.border-zinc-700]="!isFollowing"
+        [class.text-zinc-700]="!isFollowing"
+        [class.bg-white]="!isFollowing"
+        [class.border-zinc-700]="isFollowing"
+        [class.bg-zinc-700]="isFollowing"
+        [class.text-white]="isFollowing"
+      >
+        {{ isFollowing ? 'Following' : 'Follow' }}
+      </button>
+    </div>
+
+    <hr class="my-2 border-gray-200" />
+
+    <!-- Can Teach Section -->
+    <div class="mt-4">
+      <h3 class="font-bold text-base text-gray-900 mb-2">Can Teach</h3>
+      <div class="flex flex-wrap gap-2">
+        @for (course of tutor.canTeach; track course) {
+          <span class="px-3 py-1 border border-gray-400 text-gray-800 text-xs rounded-full">
+            {{ course }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Needs Help With Section -->
+    <div class="mt-5">
+      <h3 class="font-bold text-base text-gray-900 mb-2">Needs Help With</h3>
+      <div class="flex flex-wrap gap-2">
+        @for (course of tutor.needsHelpWith; track course) {
+          <span class="px-3 py-1 border border-gray-400 text-gray-800 text-xs rounded-full">
+            {{ course }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Availability Section -->
+    <div class="mt-5">
+      <h3 class="font-bold text-base text-gray-900 mb-2">Availability</h3>
+      <div class="flex flex-wrap gap-2">
+        @for (slot of tutor.availability; track slot) {
+          <span class="px-3 py-1 border border-gray-400 text-gray-800 text-xs rounded-full">
+            {{ slot }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Spacer to push button to bottom -->
+    <div class="grow"></div>
+
+    <!-- Primary Action Button -->
+    <div class="mt-6 pb-4">
+      <button
+        (click)="requestSession(tutor.id)"
+        class="w-full py-3 bg-zinc-700 text-white font-medium text-sm rounded-xl hover:bg-zinc-800 transition-colors"
+      >
+        Request Session
+      </button>
+    </div>
+
+  } @else {
+    <div class="flex items-center justify-center grow">
+      <p class="text-sm text-gray-400">Profile not found.</p>
+    </div>
+  }
+
+</div>

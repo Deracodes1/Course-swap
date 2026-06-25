@@ -2,6 +2,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserProfile } from '../models/user-models';
 import { Injectable } from '@angular/core';
+
 export interface Session {
   id: string;
   courseCode: string;
@@ -11,11 +12,11 @@ export interface Session {
   notes?: string;
   status: 'Confirmed' | 'Pending' | 'Completed';
 }
+
 @Injectable({
   providedIn: 'root',
 })
 export class MockDbService {
-  // Mock current user profile initialized with Chinedu's persona
   private currentUser$ = new BehaviorSubject<UserProfile>({
     id: 'user_chinedu',
     name: 'Chinedu',
@@ -31,7 +32,6 @@ export class MockDbService {
     isOnboarded: false,
   });
 
-  // Mock global network database of available tutors/students on campus
   private users$ = new BehaviorSubject<UserProfile[]>([
     {
       id: 'tutor_aria',
@@ -39,12 +39,13 @@ export class MockDbService {
       email: 'arialarks@gmail.com',
       department: 'Computer Science',
       level: 'Sophomore',
-      canTeach: ['Algorithms', 'Data Structures', 'Java', 'Programming Fundamentals'],
-      needsHelpWith: ['Statistics', 'Physics', 'Discrete Math'],
+      canTeach: ['Algorithms', 'Data Structures', 'Java', 'Databases'],
+      needsHelpWith: ['Statistics', 'Physics', 'Discrete Math', 'Linear Algebra'],
       availability: ['Weekdays', 'Weekends'],
       rating: 4.8,
       sessionsCompleted: 25,
       isOnboarded: true,
+      matchPercentage: 85,
     },
     {
       id: 'tutor_kai',
@@ -53,15 +54,15 @@ export class MockDbService {
       department: 'Mathematics',
       level: '300 Level',
       canTeach: ['Calculus', 'Linear Algebra'],
-      needsHelpWith: ['Probability'],
+      needsHelpWith: ['Statistics', 'Probability'],
       availability: ['Weekdays'],
       rating: 4.9,
       sessionsCompleted: 14,
       isOnboarded: true,
+      matchPercentage: 90,
     },
   ]);
 
-  // Track the interactive scheduled sessions
   private sessions$ = new BehaviorSubject<Session[]>([
     {
       id: '1',
@@ -105,9 +106,13 @@ export class MockDbService {
     },
   ]);
 
+  // Tracks followed user IDs in-session
+  private followedUsers = new Set<string>();
+
   getCurrentUser(): Observable<UserProfile> {
     return this.currentUser$.asObservable();
   }
+
   getSessions(): Observable<Session[]> {
     return this.sessions$.asObservable();
   }
@@ -117,15 +122,15 @@ export class MockDbService {
     this.sessions$.next([...currentSessions, session]);
   }
 
-  // Dual-sided matching query engine logic ("What I need help with" matches "What they can teach")
   getMatches(searchQuery: string): Observable<UserProfile[]> {
     return this.users$.pipe(
       map((users) =>
         users.filter((user) => {
+          const q = searchQuery.toLowerCase();
           const matchesQuery = searchQuery
-            ? user.canTeach?.some((course) =>
-                course.toLowerCase().includes(searchQuery.toLowerCase()),
-              )
+            ? user.canTeach?.some((c) => c.toLowerCase().includes(q)) ||
+              user.needsHelpWith?.some((c) => c.toLowerCase().includes(q)) ||
+              user.department?.toLowerCase().includes(q)
             : true;
           return matchesQuery && user.id !== this.currentUser$.value.id;
         }),
@@ -133,7 +138,22 @@ export class MockDbService {
     );
   }
 
-  // Client-side mock booking execution endpoint
+  getUserById(id: string): Observable<UserProfile | undefined> {
+    return this.users$.pipe(map((users) => users.find((u) => u.id === id)));
+  }
+
+  toggleFollow(userId: string): void {
+    if (this.followedUsers.has(userId)) {
+      this.followedUsers.delete(userId);
+    } else {
+      this.followedUsers.add(userId);
+    }
+  }
+
+  isFollowing(userId: string): boolean {
+    return this.followedUsers.has(userId);
+  }
+
   bookSession(session: Omit<Session, 'id' | 'status'>): void {
     const newSession: Session = {
       ...session,
