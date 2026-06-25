@@ -14,6 +14,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-onboarding-wizard',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './onboarding-wizard.html',
   styleUrl: './onboarding-wizard.css',
@@ -103,7 +104,7 @@ export class OnboardingWizard implements OnInit {
     return null;
   }
 
-  // Handle Intent Checkbox choices explicitly
+  // Handle Intent choices explicitly
   setIntent(intentValue: 'Teach' | 'Learn' | 'Both'): void {
     this.onboardingForm.patchValue({ intent: intentValue });
     this.errorMessage = '';
@@ -128,6 +129,8 @@ export class OnboardingWizard implements OnInit {
     event: Event,
   ): void {
     const selectEl = event.target as HTMLSelectElement;
+    if (!course) return;
+
     const currentValues: string[] = [...this.onboardingForm.get(controlName)?.value];
 
     if (!currentValues.includes(course)) {
@@ -139,10 +142,12 @@ export class OnboardingWizard implements OnInit {
 
     this.onboardingForm.get(controlName)?.setValue(currentValues);
     this.onboardingForm.get(controlName)?.markAsTouched();
+
+    // Reset selection box index cleanly so players can multi-click the same component slot
+    selectEl.value = '';
   }
 
   // Final validation checkpoint before form completion
-  // Replace your existing submitOnboarding() function with this tracking block:
   submitOnboarding(): void {
     this.onboardingForm.markAllAsTouched();
     this.errorMessage = '';

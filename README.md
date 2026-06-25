@@ -1,6 +1,8 @@
 # CourseSwap
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+1. your strengths. which you can actually defend. e.g a detailed oriented person, quick learner et al.
+2. your skills aligns with the job description/key words attributed to the role.
+3. This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
 
 ## Development server
 
