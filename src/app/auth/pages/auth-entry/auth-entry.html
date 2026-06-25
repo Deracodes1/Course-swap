@@ -8,7 +8,9 @@
       >
         CS
       </div>
-      <h1 class="text-2xl font-bold font-serif text-gray-900">CourseSwap</h1>
+      <h1 class="text-2xl font-bold font-serif text-gray-900">
+        {{ isSignUpMode ? 'Get Started' : 'Log In to CourseSwap' }}
+      </h1>
       <p class="text-xs text-gray-400 mt-1">Campus Peer-to-Peer Learning Market</p>
     </div>
 
@@ -35,7 +37,7 @@
         <input
           type="email"
           formControlName="email"
-          placeholder="student@university.edu"
+          placeholder="Institutional Email Address (.edu)"
           class="w-full p-3 border rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-zinc-500"
           [class.border-red-400]="authForm.get('email')?.touched && authForm.get('email')?.invalid"
         />
@@ -45,16 +47,65 @@
         <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1"
           >Password</label
         >
-        <input
-          type="password"
-          formControlName="password"
-          placeholder="••••••••"
-          class="w-full p-3 border rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-zinc-500"
-          [class.border-red-400]="
-            authForm.get('password')?.touched && authForm.get('password')?.invalid
-          "
-        />
+        <div class="relative">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            [placeholder]="isSignUpMode ? 'Create Password' : 'Enter Password'"
+            class="w-full p-3 pr-12 border rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-zinc-500"
+            [class.border-red-400]="
+              authForm.get('password')?.touched && authForm.get('password')?.invalid
+            "
+          />
+          <button
+            type="button"
+            (click)="showPassword = !showPassword"
+            class="absolute right-3 top-3 text-xs font-extrabold text-zinc-500 hover:text-zinc-800 focus:outline-none select-none"
+          >
+            {{ showPassword ? 'HIDE' : 'SHOW' }}
+          </button>
+        </div>
       </div>
+
+      @if (isSignUpMode) {
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1"
+            >Confirm Password</label
+          >
+          <div class="relative">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="Confirm Password"
+              class="w-full p-3 pr-12 border rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-zinc-500"
+              [class.border-red-400]="
+                (authForm.get('confirmPassword')?.touched &&
+                  authForm.get('confirmPassword')?.invalid) ||
+                (authForm.touched && authForm.errors?.['passwordMismatch'])
+              "
+            />
+            <button
+              type="button"
+              (click)="showConfirmPassword = !showConfirmPassword"
+              class="absolute right-3 top-3 text-xs font-extrabold text-zinc-500 hover:text-zinc-800 focus:outline-none select-none"
+            >
+              {{ showConfirmPassword ? 'HIDE' : 'SHOW' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (!isSignUpMode) {
+        <div class="text-right">
+          <button
+            type="button"
+            (click)="forgotPassword()"
+            class="text-xs font-bold text-zinc-600 hover:text-zinc-900 focus:outline-none"
+          >
+            Forgot Password?
+          </button>
+        </div>
+      }
 
       @if (errorMessage) {
         <div
@@ -68,7 +119,7 @@
         type="submit"
         class="w-full py-3 bg-zinc-800 text-white font-medium text-sm rounded-xl shadow-xs hover:bg-zinc-900 transition-colors mt-2"
       >
-        {{ isSignUpMode ? 'Create Account' : 'Sign In' }}
+        {{ isSignUpMode ? 'Create Account' : 'Log In' }}
       </button>
     </form>
   </div>
@@ -81,7 +132,7 @@
     >
       {{
         isSignUpMode
-          ? 'Already have an institutional account? Sign In'
+          ? 'Already have an account? Log in'
           : "Don't have an account yet? Register here"
       }}
     </button>

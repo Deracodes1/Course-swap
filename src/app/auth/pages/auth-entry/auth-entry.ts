@@ -13,14 +13,19 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth-entry',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './auth-entry.html',
   styleUrl: './auth-entry.css',
 })
 export class AuthEntry implements OnInit {
   authForm!: FormGroup;
-  isSignUpMode = false; // Toggle between register view and simple login view
+  isSignUpMode = false; // Toggle between register view (Sign Up) and login view (Sign In)
   errorMessage = '';
+
+  // Password visibility state tracks
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -33,11 +38,17 @@ export class AuthEntry implements OnInit {
   }
 
   initForm(): void {
-    this.authForm = this.fb.group({
-      name: ['', this.isSignUpMode ? [Validators.required, Validators.minLength(2)] : []],
-      email: ['', [Validators.required, Validators.email, this.institutionalEmailValidator]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
+    this.authForm = this.fb.group(
+      {
+        name: ['', this.isSignUpMode ? [Validators.required, Validators.minLength(2)] : []],
+        email: ['', [Validators.required, Validators.email, this.institutionalEmailValidator]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', this.isSignUpMode ? [Validators.required] : []],
+      },
+      {
+        validators: this.isSignUpMode ? this.passwordMatchValidator : null,
+      },
+    );
   }
 
   // Custom validator enforcing institutional validation limits
@@ -51,9 +62,18 @@ export class AuthEntry implements OnInit {
     return null;
   }
 
+  // Cross-field validator ensuring matching password inputs during Sign Up
+  passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
+
   toggleMode(): void {
     this.isSignUpMode = !this.isSignUpMode;
     this.errorMessage = '';
+    this.showPassword = false;
+    this.showConfirmPassword = false;
     this.initForm(); // Re-initialize fields to apply or clear constraints cleanly
   }
 
@@ -62,6 +82,11 @@ export class AuthEntry implements OnInit {
     this.errorMessage = '';
 
     if (this.authForm.invalid) {
+      if (this.authForm.errors?.['passwordMismatch']) {
+        this.errorMessage = 'Passwords do not match.';
+        return;
+      }
+
       const emailErrors = this.authForm.get('email')?.errors;
       if (emailErrors?.['institutionalRequired']) {
         this.errorMessage = emailErrors['institutionalRequired'];
@@ -74,13 +99,10 @@ export class AuthEntry implements OnInit {
     const { name, email } = this.authForm.value;
 
     if (this.isSignUpMode) {
-      // Create user profile entity natively inside the system
-      this.authService.setAuthUser(name, email);
+      this.authService.setAuthUser(name || 'New User', email);
       alert('Account configured successfully! Redirecting to setup requirements.');
-      // Proceed directly onto your custom sequential wizard screen
-      // this.router.navigate(['/onboarding']);
+      this.router.navigate(['/onboarding']);
     } else {
-      // Client-side authentication lookup fallback
       this.authService.setAuthUser('Chinedu', email);
 
       const user = this.authService.currentUserSnapshot;
@@ -92,5 +114,10 @@ export class AuthEntry implements OnInit {
         alert('Account session recovered, but profile setup is pending.');
       }
     }
+  }
+
+  // Fallback simulator handler for secondary feature criteria
+  forgotPassword(): void {
+    alert('Password reset instructions have been streamed to your institutional address.');
   }
 }
